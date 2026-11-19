@@ -64,3 +64,5 @@ def serve_static(path):
     return "File tidak ditemukan", 404
 
 # Vercel akan menjalankan aplikasi secara otomatis dari variabel 'app' di atas.
+# Handler untuk Vercel
+handler = app
