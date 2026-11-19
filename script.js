@@ -38,13 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                window.location.href = 'reset.html'; 
+                window.location.href = 'reset.html';
             } else {
-                alert('Gagal mengirim ke Telegram. Cek Token/ID di server.py');
+                // Menampilkan pesan error yang detail dari server Vercel
+                const errorData = await response.json();
+                alert('Gagal: ' + (errorData.message || 'Terjadi kesalahan pada server.'));
                 resetBtn();
             }
         } catch (error) {
-            alert('Gagal terhubung ke server Python. Pastikan server.py berjalan.');
+            alert('Gagal terhubung ke server. Periksa koneksi internet atau konfigurasi Vercel.');
             resetBtn();
         }
     });

@@ -6,25 +6,15 @@ import json
 app = Flask(__name__)
 
 # ==========================================
-# 1. KONFIGURASI TELEGRAM
+# 1. KONFIGURASI TELEGRAM (Khusus Vercel)
 # ==========================================
-# Coba ambil dari Environment Variable (untuk Vercel nanti)
+# Hanya membaca dari Environment Variables Vercel
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
-# Jika kosong, ambil dari config.json (untuk localhost sekarang)
-if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
-    try:
-        with open('config.json', 'r') as f:
-            config = json.load(f)
-            TELEGRAM_TOKEN = config['TELEGRAM_TOKEN']
-            TELEGRAM_CHAT_ID = config['TELEGRAM_CHAT_ID']
-    except FileNotFoundError:
-        print("❌ Error: config.json tidak ditemukan dan Environment Variable kosong!")
-
 def send_to_telegram(pesan):
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
-        raise ValueError("Token atau Chat ID Telegram belum diatur.")
+        raise ValueError("Token atau Chat ID Telegram belum diatur di Vercel!")
     
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     payload = json.dumps({
@@ -65,19 +55,12 @@ def api_reset():
 # ==========================================
 @app.route('/')
 def home():
-    # Menampilkan halaman utama (index.html)
     return send_from_directory('.', 'index.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
-    # Menampilkan file lain seperti script.js, style.css, dashboard.html, dll.
     if os.path.exists(path):
         return send_from_directory('.', path)
     return "File tidak ditemukan", 404
 
-# ==========================================
-# 4. JALANKAN SERVER (Untuk Localhost)
-# ==========================================
-if __name__ == '__main__':
-    print("✅ Server Flask berjalan di http://localhost:8080")
-    app.run(host='0.0.0.0', port=8080, debug=True)
+# Vercel akan menjalankan aplikasi secara otomatis dari variabel 'app' di atas.
